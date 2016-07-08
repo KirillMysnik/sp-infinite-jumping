@@ -21,13 +21,13 @@ def pre_run_command(args):
     if player.move_type & MoveType.LADDER:
         return
 
-    # Is player in water?
-    if player.flags & PlayerStates.INWATER:
+    # Is player in water deep enough?
+    if player.get_property_uchar('m_nWaterLevel') > 1:
+        return
+
+    # Is player already on ground?
+    if player.flags & PlayerStates.ONGROUND:
         return
 
     user_cmd = make_object(UserCmd, args[1])
-
-    # If player is not on ground...
-    if not player.flags & PlayerStates.ONGROUND:
-        # ... he doesn't need no JUMP button
-        user_cmd.buttons &= ~PlayerButtons.JUMP
+    user_cmd.buttons &= ~PlayerButtons.JUMP
